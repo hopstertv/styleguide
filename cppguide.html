@@ -2,14 +2,22 @@
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<title>Google C++ Style Guide</title>
+<title>Hopster C++ Style Guide</title>
 <link rel="stylesheet" type="text/css" href="include/styleguide.css">
 <script language="javascript" src="include/styleguide.js"></script>
 <link rel="shortcut icon" type="image/x-icon" href="https://www.google.com/favicon.ico" />
 </head>
 <body onload="initStyleGuide();">
 <div id="content">
-<h1>Google C++ Style Guide</h1>
+<h1>Hopster C++ Style Guide</h1>
+
+<blockquote>
+  <p>Version: v0.1 - Last updated: August 14, 2017</p>
+  <p><em>Forked from <a href="https://google.github.io/styleguide/cppguide.html">Google's C++ coding style</a> rev.
+    <a href="https://github.com/google/styleguide/commit/77f7f28d314862754877bf19a8b032158522f7aa">77f7f2</a>.</em></p>
+</blockquote>
+
+
 <div class="horizontal_toc" id="tocDiv"></div>
 
 <div class="main_body">
@@ -164,10 +172,10 @@ input.</p>
 
 <h2 id="Header_Files">Header Files</h2>
 
-<p>In general, every <code>.cc</code> file should have an
+<p>In general, every <code>.cpp</code> file should have an
 associated <code>.h</code> file. There are some common
 exceptions, such as  unittests and
-small <code>.cc</code> files containing just a
+small <code>.cpp</code> files containing just a
 <code>main()</code> function.</p>
 
 <p>Correct use of header files can make a huge difference to
@@ -194,7 +202,7 @@ other headers it needs.</p>
 
 <p>Prefer placing the definitions for template and inline functions in
 the same file as their declarations.  The definitions of these
-constructs must be included into every <code>.cc</code> file that uses
+constructs must be included into every <code>.cpp</code> file that uses
 them, or the program may fail to link in some build configurations.  If
 declarations and definitions are in different files, including the
 former should transitively include the latter.  Do not move these
@@ -204,7 +212,7 @@ this practice was common in the past, but is no longer allowed.</p>
 <p>As an exception, a template that is explicitly instantiated for
 all relevant sets of template arguments, or that is a private
 implementation detail of a class, is allowed to be defined in the one
-and only <code>.cc</code> file that instantiates the template.</p>
+and only <code>.cpp</code> file that instantiates the template.</p>
 
 <p>There are rare cases where a file designed to be included is not
 self-contained.  These are typically intended to be included at unusual
@@ -296,12 +304,12 @@ function, or template without an associated definition.</p>
   Replacing an <code>#include</code> with a forward
   declaration can silently change the meaning of
   code:
-      <pre>      // b.h:
+      <pre>      // B.h:
       struct B {};
       struct D : B {};
 
-      // good_user.cc:
-      #include "b.h"
+      // GoodUser.cpp:
+      #include "B.h"
       void f(B*);
       void f(void*);
       void test(D* x) { f(x); }  // calls f(B*)
@@ -418,8 +426,8 @@ should be included as:</p>
 <pre>#include "base/logging.h"
 </pre>
 
-<p>In <code><var>dir/foo</var>.cc</code> or
-<code><var>dir/foo_test</var>.cc</code>, whose main
+<p>In <code><var>dir/foo</var>.cpp</code> or
+<code><var>dir/foo_test</var>.cpp</code>, whose main
 purpose is to implement or test the stuff in
 <code><var>dir2/foo2</var>.h</code>, order your includes
 as follows:</p>
@@ -441,15 +449,15 @@ as follows:</p>
 
 <p>With the preferred ordering, if
 <code><var>dir2/foo2</var>.h</code> omits any necessary
-includes, the build of <code><var>dir/foo</var>.cc</code>
-or <code><var>dir/foo</var>_test.cc</code> will break.
+includes, the build of <code><var>dir/foo</var>.cpp</code>
+or <code><var>dir/foo</var>_test.cpp</code> will break.
 Thus, this rule ensures that build breaks show up first
 for the people working on these files, not for innocent
 people in other packages.</p>
 
-<p><code><var>dir/foo</var>.cc</code> and
+<p><code><var>dir/foo</var>.cpp</code> and
 <code><var>dir2/foo2</var>.h</code> are usually in the same
-directory (e.g. <code>base/basictypes_test.cc</code> and
+directory (e.g. <code>base/basictypes_test.cpp</code> and
 <code>base/basictypes.h</code>), but may sometimes be in different
 directories too.</p>
 
@@ -467,16 +475,16 @@ don't count on the fact that you included <code>foo.h</code> which
 yourself, unless <code>foo.h</code> explicitly demonstrates its intent
 to provide you the symbols of <code>bar.h</code>.  However, any
 includes present in the related header do not need to be included
-again in the related <code>cc</code> (i.e., <code>foo.cc</code> can
+again in the related <code>cc</code> (i.e., <code>foo.cpp</code> can
 rely on <code>foo.h</code>'s includes).</p>
 
 <p>For example, the includes in
 
-<code>google-awesome-project/src/foo/internal/fooserver.cc</code>
+<code>google-awesome-project/src/foo/internal/fooServer.cpp</code>
 might look like this:</p>
 
 
-<pre>#include "foo/server/fooserver.h"
+<pre>#include "foo/server/fooServer.h"
 
 #include &lt;sys/types.h&gt;
 #include &lt;unistd.h&gt;
@@ -484,8 +492,8 @@ might look like this:</p>
 #include &lt;hash_map&gt;
 #include &lt;vector&gt;
 
-#include "base/basictypes.h"
-#include "base/commandlineflags.h"
+#include "base/basicTypes.h"
+#include "base/commandLineFlags.h"
 #include "foo/server/bar.h"
 </pre>
 
@@ -494,7 +502,7 @@ conditional includes. Such code can put conditional
 includes after other includes. Of course, keep your
 system-specific code small and localized. Example:</p>
 
-<pre>#include "foo/public/fooserver.h"
+<pre>#include "foo/public/fooServer.h"
 
 #include "base/port.h"  // For LANG_CXX11.
 
@@ -603,7 +611,7 @@ class MyClass {
 }  // namespace mynamespace
 </pre>
 
-<pre>// In the .cc file
+<pre>// In the .cpp file
 namespace mynamespace {
 
 // Definition of functions is within scope of the namespace.
@@ -614,7 +622,7 @@ void MyClass::Foo() {
 }  // namespace mynamespace
 </pre>
 
-  <p>More complex <code>.cc</code> files might have additional details,
+  <p>More complex <code>.cpp</code> files might have additional details,
   like flags or using-declarations.</p>
 
 <pre>#include "a.h"
@@ -654,7 +662,7 @@ using namespace foo;
   in a header file becomes part of the public
   API exported by that file.</p>
 
-<pre>// Shorten access to some commonly used names in .cc files.
+<pre>// Shorten access to some commonly used names in .cpp files.
 namespace baz = ::foo::bar::baz;
 </pre>
 
@@ -664,7 +672,7 @@ namespace impl {  // Internal, not part of the API.
 namespace sidetable = ::pipeline_diagnostics::sidetable;
 }  // namespace impl
 
-inline void my_inline_function() {
+inline void myInlineFunction() {
   // namespace alias local to a function (or method).
   namespace baz = ::foo::bar::baz;
   ...
@@ -681,7 +689,7 @@ inline void my_inline_function() {
 Variables</h3>
 
 <div class="summary">
-<p>When definitions in a <code>.cc</code> file do not need to be
+<p>When definitions in a <code>.cpp</code> file do not need to be
 referenced outside that file, place them in an unnamed
 namespace or declare them <code>static</code>. Do not use either
 of these constructs in <code>.h</code> files.
@@ -699,7 +707,7 @@ with the same name, then the two entities are completely independent.</p>
 
 <div class="decision">
 
-<p>Use of internal linkage in <code>.cc</code> files is encouraged
+<p>Use of internal linkage in <code>.cpp</code> files is encouraged
 for all code that does not need to be referenced elsewhere.
 Do not use internal linkage in <code>.h</code> files.</p>
 
@@ -746,7 +754,7 @@ variables, and should nearly always exist in a namespace.
 Rather than creating classes only to group static member
 functions which do not share static data, use
 <a href="#Namespaces">namespaces</a> instead. For a header
-<code>myproject/foo_bar.h</code>, for example, write</p>
+<code>myproject/fooBar.h</code>, for example, write</p>
 <pre>namespace myproject {
 namespace foo_bar {
 void Function1();
@@ -765,7 +773,7 @@ class FooBar {
 </pre>
 
 <p>If you define a nonmember function and it is only
-needed in its <code>.cc</code> file, use
+needed in its <code>.cpp</code> file, use
 <a href="#Unnamed_Namespaces_and_Static_Variables">internal linkage</a> to limit
 its scope.</p>
 </div>
@@ -1187,11 +1195,11 @@ if that's an API guarantee.</p>
 
 <pre class="badcode">class Foo {
  public:
-  Foo(Foo&amp;&amp; other) : field_(other.field) {}
+  Foo(Foo&amp;&amp; other) : _field(other.field) {}
   // Bad, defines only move constructor, but not operator=.
 
  private:
-  Field field_;
+  Field _field;
 };
 </pre>
 
@@ -1542,7 +1550,7 @@ built-in operators. For example, use <code>|</code> as a
 bitwise- or logical-or, not as a shell-style pipe.</p>
 
 <p>Define operators only on your own types. More precisely,
-define them in the same headers, .cc files, and namespaces
+define them in the same headers, .cpp files, and namespaces
 as the types they operate on. That way, the operators are available
 wherever the type is, minimizing the risk of multiple
 definitions. If possible, avoid defining operators as templates,
@@ -2445,7 +2453,7 @@ workarounds disguise your true intent.</p>
 
 <div class="summary">
 <p>Use C++-style casts
-like <code>static_cast&lt;float&gt;(double_value)</code>, or brace
+like <code>static_cast&lt;float&gt;(doubleValue)</code>, or brace
 initialization for conversion of arithmetic types like
 <code>int64 y = int64{1} &lt;&lt; 42</code>. Do not use
 cast formats like
@@ -2605,7 +2613,7 @@ localization, and security hardening.</p>
 
 <p>If you do use streams, avoid the stateful parts of the
 streams API (other than error state), such as <code>imbue()</code>,
-<code>xalloc()</code>, and <code>register_callback()</code>.
+<code>xalloc()</code>, and <code>registerCallback()</code>.
 Use explicit formatting functions  rather than
 stream manipulators or formatting flags to control formatting
 details such as number base, precision, or padding.</p>
@@ -3068,8 +3076,8 @@ problems of printing, comparisons, and structure alignment.</p>
   example:</p>
 
 
-<pre>int64_t my_value = 0x123456789LL;
-uint64_t my_mask = 3ULL &lt;&lt; 48;
+<pre>int64_t myValue = 0x123456789LL;
+uint64_t myMask = 3ULL &lt;&lt; 48;
 </pre>
   </li>
 </ul>
@@ -3259,7 +3267,7 @@ especially when a variable's initialization depends on
 things that were declared far away. In expressions
 like:</p>
 
-<pre class="badcode">auto foo = x.add_foo();
+<pre class="badcode">auto foo = x.addFoo();
 auto i = y.Find(key);
 </pre>
 
@@ -3306,7 +3314,7 @@ is <code>std::pair&lt;KeyType, ValueType&gt;</code> whereas it is actually
 particularly well paired with local <code>key</code>
 and <code>value</code> aliases for <code>.first</code>
 and <code>.second</code> (often const-ref).
-<pre class="code">for (const auto&amp; item : some_map) {
+<pre class="code">for (const auto&amp; item : someMap) {
   const KeyType&amp; key = item.first;
   const ValType&amp; value = item.second;
   // The rest of the loop can now just refer to key and value,
@@ -3355,7 +3363,7 @@ auto p = new vector&lt;string&gt;{"foo", "bar"};
 std::map&lt;int, string&gt; m = {{1, "one"}, {2, "2"}};
 
 // A braced-init-list can be implicitly converted to a return type.
-std::vector&lt;int&gt; test_function() { return {1, 2, 3}; }
+std::vector&lt;int&gt; testFunction() { return {1, 2, 3}; }
 
 // Iterate over a braced-init-list.
 for (int i : {-1, -2, -3}) {}
@@ -3373,12 +3381,12 @@ created from <i>braced-init-list</i>:</p>
  public:
   // std::initializer_list references the underlying init list.
   // It should be passed by value.
-  MyType(std::initializer_list&lt;int&gt; init_list) {
-    for (int i : init_list) append(i);
+  MyType(std::initializer_list&lt;int&gt; initList) {
+    for (int i : initList) append(i);
   }
-  MyType&amp; operator=(std::initializer_list&lt;int&gt; init_list) {
+  MyType&amp; operator=(std::initializer_list&lt;int&gt; initList) {
     clear();
-    for (int i : init_list) append(i);
+    for (int i : initList) append(i);
   }
 };
 MyType m{2, 3, 5, 7};
@@ -3452,12 +3460,12 @@ std::for_each(v.begin(), v.end(), [weight, &amp;sum](int x) {
 Default captures implicitly capture any variable referenced in the
 lambda body, including <code>this</code> if any members are used:
 
-<pre>const std::vector&lt;int&gt; lookup_table = ...;
+<pre>const std::vector&lt;int&gt; lookupTable = ...;
 std::vector&lt;int&gt; indices = ...;
-// Captures `lookup_table` by reference, sorts `indices` by the value
-// of the associated element in `lookup_table`.
+// Captures `lookupTable` by reference, sorts `indices` by the value
+// of the associated element in `lookupTable`.
 std::sort(indices.begin(), indices.end(), [&amp;](int a, int b) {
-  return lookup_table[a] &lt; lookup_table[b];
+  return lookupTable[a] &lt; lookupTable[b];
 });
 </pre>
 
@@ -3828,7 +3836,7 @@ which is unaffected by this prohibition.</p>
 
 <p>If you want to use the standard hash containers anyway, you will
 need to specify a custom hasher for the key type, e.g.</p>
-<pre>std::unordered_map&lt;MyKeyType, Value, MyKeyTypeHasher&gt; my_map;
+<pre>std::unordered_map&lt;MyKeyType, Value, MyKeyTypeHasher&gt; myMap;
 </pre><p>
 Consult with the type's owners to see if there is an existing hasher
 that you can use; otherwise work with them to provide one,
@@ -3988,7 +3996,7 @@ using other_namespace::Foo;
 
   <p>Like other declarations, aliases declared in a header file are part of that
   header's public API unless they're in a function definition, in the private portion of a class,
-  or in an explicitly-marked internal namespace. Aliases in such areas or in .cc files are
+  or in an explicitly-marked internal namespace. Aliases in such areas or in .cpp files are
   implementation details (because client code can't refer to them), and are not restricted by this
   rule.</p>
 </div>
@@ -4053,9 +4061,9 @@ typedef unordered_set&lt;DataPoint, hash&lt;DataPoint&gt;, DataPointComparator&g
 </pre>
 
 <p>However, local convenience aliases are fine in function definitions, private sections of
-  classes, explicitly marked internal namespaces, and in .cc files:</p>
+  classes, explicitly marked internal namespaces, and in .cpp files:</p>
 
-<pre>// In a .cc file
+<pre>// In a .cpp file
 using std::unordered_set;
 </pre>
 
@@ -4093,17 +4101,29 @@ that are ambiguous or unfamiliar to readers outside your
 project, and do not abbreviate by deleting letters within
 a word.</p>
 
-<pre>int price_count_reader;    // No abbreviation.
-int num_errors;            // "num" is a widespread convention.
-int num_dns_connections;   // Most people know what "DNS" stands for.
+
+<p>Names should start with a lower case or capital letter
+(depends from situation) and have capital letter for each new word
+(a.k.a. "<a href="https://en.wikipedia.org/wiki/Camel_case">Camel Case</a>"
+or "Pascal case"). Such names should not have underscores.
+
+Prefer to capitalize acronyms as single words
+(i.e. <code>StartRpc()</code>, not <code>StartRPC()</code>).
+</p>
+
+<pre>
+int priceCountReader;      // No abbreviation.
+int numErrors;             // "num" is a widespread convention.
+int numDnsConnections;     // Most people know what "DNS" stands for.
 </pre>
 
-<pre class="badcode">int n;                     // Meaningless.
+<pre class="badcode">
+int n;                     // Meaningless.
 int nerr;                  // Ambiguous abbreviation.
-int n_comp_conns;          // Ambiguous abbreviation.
-int wgc_connections;       // Only your group knows what this stands for.
-int pc_reader;             // Lots of things can be abbreviated "pc".
-int cstmr_id;              // Deletes internal letters.
+int nCompConns;            // Ambiguous abbreviation.
+int wgcConnections;        // Only your group knows what this stands for.
+int pcReader;              // Lots of things can be abbreviated "pc".
+int cstmrId;               // Deletes internal letters.
 </pre>
 
 <p>Note that certain universally-known abbreviations are OK, such as
@@ -4121,26 +4141,29 @@ variable names</a>.
 <h3 id="File_Names">File Names</h3>
 
 <div class="summary">
-<p>Filenames should be all lowercase and can include
-underscores (<code>_</code>) or dashes (<code>-</code>).
-Follow the convention that your
- 
-project uses. If there is no consistent
-local pattern to follow, prefer "_".</p>
+  <p>Filenames should be all in CamelCase or camelCase:</p>
+  <ul>
+    <li>CamelCase - files referring to classes, structs or templates,</li>
+    <li>camelCase - bunch of functions, constants or just macros.</li>
+  </ul>
 </div>
 
 <div class="stylebody">
 
 <p>Examples of acceptable file names:</p>
-
 <ul>
-  <li><code>my_useful_class.cc</code></li>
-  <li><code>my-useful-class.cc</code></li>
-  <li><code>myusefulclass.cc</code></li>
-  <li><code>myusefulclass_test.cc // _unittest and _regtest are deprecated.</code></li>
+  <li><code>Sprite.cpp</code></li>
+  <li><code>Sprite.h</code></li>
+  <li><code>TextureCache.cpp</code></li>
+  <li><code>TextureCache.h</code></li>
+  <li><code>Texture2D.cpp</code></li>
+  <li><code>Texture2D.h</code></li>
+  <li><code>namespaces.h</code></li>
+  <li><code>mathFunctions.cpp</code></li>
+  <li><code>mathFunctions.h</code></li>
 </ul>
 
-<p>C++ files should end in <code>.cc</code> and header files should end in
+<p>C++ files should end in <code>.cpp</code> and header files should end in
 <code>.h</code>. Files that rely on being textually included at specific points
 should end in <code>.inc</code> (see also the section on
 <a href="#Self_contained_Headers">self-contained headers</a>).</p>
@@ -4149,10 +4172,10 @@ should end in <code>.inc</code> (see also the section on
 <code>/usr/include</code>, such as <code>db.h</code>.</p>
 
 <p>In general, make your filenames very specific. For
-example, use <code>http_server_logs.h</code> rather than
+example, use <code>httpServerLogs.h</code> rather than
 <code>logs.h</code>. A very common case is to have a pair
-of files called, e.g., <code>foo_bar.h</code> and
-<code>foo_bar.cc</code>, defining a class called
+of files called, e.g., <code>FooBar.h</code> and
+<code>FooBar.cpp</code>, defining a class called
 <code>FooBar</code>.</p>
 
 <p>Inline functions must be in a <code>.h</code> file. If
@@ -4199,8 +4222,8 @@ enum UrlTableErrors { ...
 <p>The names of variables (including function parameters) and data members are
 all lowercase, with underscores between words. Data members of classes (but not
 structs) additionally have trailing underscores. For instance:
-<code>a_local_variable</code>, <code>a_struct_data_member</code>,
-<code>a_class_data_member_</code>.</p>
+<code>aLocalVariable</code>, <code>aStructDataMember</code>,
+<code>_aClassDataMember</code>.</p>
 </div>
 
 <div class="stylebody">
@@ -4209,25 +4232,26 @@ structs) additionally have trailing underscores. For instance:
 
 <p>For example:</p>
 
-<pre>string table_name;  // OK - uses underscore.
-string tablename;   // OK - all lowercase.
+<pre>
+string tableName;   // OK - uses camelcase.
 </pre>
 
-<pre class="badcode">string tableName;   // Bad - mixed case.
+<pre class="badcode">
+string table_name;  // Bad - uses underscore.
+string tablename;   // Bad - no camelcase.
 </pre>
 
 <h4 class="stylepoint_subsection">Class Data Members</h4>
 
 <p>Data members of classes, both static and non-static, are
 named like ordinary nonmember variables, but with a
-trailing underscore.</p>
+leading underscore.</p>
 
 <pre>class TableInfo {
   ...
  private:
-  string table_name_;  // OK - underscore at end.
-  string tablename_;   // OK.
-  static Pool&lt;TableInfo&gt;* pool_;  // OK.
+  string _tableName;   // OK - underscore at beginning.
+  static Pool&lt;TableInfo&gt;* _pool;  // OK.
 };
 </pre>
 
@@ -4239,7 +4263,7 @@ the trailing underscores that data members in classes have.</p>
 
 <pre>struct UrlTableProperties {
   string name;
-  int num_entries;
+  int numEntries;
   static Pool&lt;UrlTableProperties&gt;* pool;
 };
 </pre>
@@ -4281,13 +4305,6 @@ like variables.</p>
 
 <div class="stylebody">
 
-<p>Ordinarily, functions should start with a capital letter and have a
-capital letter for each new word
-(a.k.a. "<a href="https://en.wikipedia.org/wiki/Camel_case">Camel
-Case</a>" or "Pascal case"). Such names should not have
-underscores. Prefer to capitalize acronyms as single words
-(i.e. <code>StartRpc()</code>, not <code>StartRPC()</code>).</p>
-
 <pre>AddTableEntry()
 DeleteUrl()
 OpenFileOrDie()
@@ -4297,11 +4314,6 @@ OpenFileOrDie()
 constants that are exposed as part of an API and that are intended to look
 like functions, because the fact that they're
 objects rather than functions is an unimportant implementation detail.)</p>
-
-<p>Accessors and mutators (get and set functions) may be named like
-variables. These often correspond to actual member variables, but this is
-not required. For example, <code>int count()</code> and <code>void
-set_count(int count)</code>.</p>
 
 </div> 
 
@@ -4511,7 +4523,7 @@ documentation about individual abstractions belongs with those abstractions,
 not at the file level.</p>
 
 <p>Do not duplicate comments in both the <code>.h</code> and the
-<code>.cc</code>. Duplicated comments diverge.</p>
+<code>.cpp</code>. Duplicated comments diverge.</p>
 
 </div> 
 
@@ -4546,7 +4558,7 @@ surrounding multithreaded use.</p>
 <p>The class comment is often a good place for a small example code snippet
 demonstrating a simple and focused usage of the class.</p>
 
-<p>When sufficiently separated (e.g. <code>.h</code> and <code>.cc</code>
+<p>When sufficiently separated (e.g. <code>.h</code> and <code>.cpp</code>
 files), comments describing the use of the class should go together with its
 interface definition; comments about the class operation and implementation
 should accompany the implementation of the class's methods.</p>
@@ -4681,7 +4693,7 @@ variable or member variable) must be clear. If there are any
 invariants (special values, relationships between members, lifetime
 requirements) not clearly expressed by the type and name, they must be
 commented. However, if the type and name suffice (<code>int
-num_events_;</code>), no comment is needed.</p>
+_numEvents;</code>), no comment is needed.</p>
 
 <p>In particular, add comments to describe the existence and meaning
 of sentinel values, such as nullptr or -1, when they are not
@@ -4690,7 +4702,7 @@ obvious. For example:</p>
 <pre>private:
  // Used to bounds-check table accesses. -1 means
  // that we don't yet know how many entries the table has.
- int num_total_entries_;
+ int _numTotalEntries;
 </pre>
 
 <h4 class="stylepoint_subsection">Global Variables</h4>
@@ -4735,8 +4747,8 @@ at the end of the line. These end-of-line comments should
 be separated from the code by 2 spaces. Example:</p>
 
 <pre>// If we have enough memory, mmap the data portion too.
-mmap_budget = max&lt;int64&gt;(0, mmap_budget - index_-&gt;length());
-if (mmap_budget &gt;= data_size_ &amp;&amp; !MmapData(mmap_chunk_bytes, mlock))
+mmapBudget = max&lt;int64&gt;(0, mmapBudget - _index-&gt;length());
+if (mmapBudget &gt;= _dataSize &amp;&amp; !MmapData(mmapChunkBytes, mlock))
   return;  // Error already logged.
 </pre>
 
@@ -4803,10 +4815,10 @@ const DecimalNumber product = CalculateProduct(values, 7, false, nullptr);
 <p>versus:</p>
 
 <pre>ProductOptions options;
-options.set_precision_decimals(7);
-options.set_use_cache(ProductOptions::kDontUseCache);
+options.setPrecisionDecimals(7);
+options.setUseCache(ProductOptions::kDontUseCache);
 const DecimalNumber product =
-    CalculateProduct(values, options, /*completion_callback=*/nullptr);
+    CalculateProduct(values, options, /*completionCallback=*/nullptr);
 </pre>
 
 <h4 class="stylepoint_subsection">Don'ts</h4>
@@ -4976,17 +4988,11 @@ settings file for emacs</a>.</p>
 <h3 id="Line_Length">Line Length</h3>
 
 <div class="summary">
-<p>Each line of text in your code should be at most 80
+<p>Each line of text in your code should be at most 130
 characters long.</p>
 </div>
 
 <div class="stylebody">
-
-
-
- <p>We recognize that this rule is
-controversial, but so much existing code already adheres
-to it, and we feel that consistency is important.</p>
 
 <div class="pros">
 <p>Those who favor  this rule
@@ -4994,34 +5000,29 @@ argue that it is rude to force them to resize
 their windows and there is no need for anything longer.
 Some folks are used to having several code windows
 side-by-side, and thus don't have room to widen their
-windows in any case. People set up their work environment
-assuming a particular maximum window width, and 80
-columns has been the traditional standard. Why change
-it?</p>
+windows in any case.</p>
 </div>
 
 <div class="cons">
-<p>Proponents of change argue that a wider line can make
-code more readable. The 80-column limit is an hidebound
-throwback to 1960s mainframes;  modern equipment has wide screens that
-can easily show longer lines.</p>
+<p>Modern equipment has wide screens that can easily
+show longer lines.</p>
 </div>
 
 <div class="decision">
-<p> 80 characters is the maximum.</p>
+<p> 130 characters is the maximum.</p>
 
-<p class="exception">Comment lines can be longer than 80
+<p class="exception">Comment lines can be longer than 130
 characters if it is not feasible to split them without
 harming readability, ease of cut and paste or auto-linking
 -- e.g. if a line contains an example command or a literal
-URL longer than 80 characters.</p>
+URL longer than 130 characters.</p>
 
 <p class="exception">A raw-string literal may have content
-that exceeds 80 characters.  Except for test code, such literals
+that exceeds 130 characters.  Except for test code, such literals
 should appear near the top of a file.</p>
 
 <p class="exception">An <code>#include</code> statement with a
-long path may exceed 80 columns.</p>
+long path may exceed 130 columns.</p>
 
 <p class="exception">You needn't be concerned about
 <a href="#The__define_Guard">header guards</a> that exceed
@@ -5104,7 +5105,7 @@ not fit on a single line as you would wrap arguments in a
 <p>Functions look like this:</p>
 
 
-<pre>ReturnType ClassName::FunctionName(Type par_name1, Type par_name2) {
+<pre>ReturnType ClassName::FunctionName(Type parName1, Type parName2) {
   DoSomething();
   ...
 }
@@ -5112,8 +5113,8 @@ not fit on a single line as you would wrap arguments in a
 
 <p>If you have too much text to fit on one line:</p>
 
-<pre>ReturnType ClassName::ReallyLongFunctionName(Type par_name1, Type par_name2,
-                                             Type par_name3) {
+<pre>ReturnType ClassName::ReallyLongFunctionName(Type parName1, Type parName2,
+                                             Type parName3) {
   DoSomething();
   ...
 }
@@ -5122,9 +5123,9 @@ not fit on a single line as you would wrap arguments in a
 <p>or if you cannot fit even the first parameter:</p>
 
 <pre>ReturnType LongClassName::ReallyReallyReallyLongFunctionName(
-    Type par_name1,  // 4 space indent
-    Type par_name2,
-    Type par_name3) {
+    Type parName1,  // 4 space indent
+    Type parName2,
+    Type parName3) {
   DoSomething();  // 2 space indent
   ...
 }
@@ -5220,7 +5221,7 @@ lists like other comma-separated lists.</p>
 <p>For by-reference captures, do not leave a space between the
 ampersand (&amp;) and the variable name.</p>
 <pre>int x = 0;
-auto x_plus_n = [&amp;x](int n) -&gt; int { return x + n; }
+auto xPlusN = [&amp;x](int n) -&gt; int { return x + n; }
 </pre>
 <p>Short lambdas may be written inline as function arguments.</p>
 <pre>std::set&lt;int&gt; blacklist = {7, 8, 9};
@@ -5285,8 +5286,8 @@ better addressed with the following techniques.</p>
 readability due to the complexity or confusing nature of the
 expressions that make up some arguments, try creating
 variables that capture those arguments in a descriptive name:</p>
-<pre>int my_heuristic = scores[x] * y + bases[x];
-bool result = DoSomething(my_heuristic, x, y, z);
+<pre>int myHeuristic = scores[x] * y + bases[x];
+bool result = DoSomething(myHeuristic, x, y, z);
 </pre>
 
 <p>Or put the confusing argument on its own line with
@@ -5304,9 +5305,9 @@ which is made more readable rather than a general policy.</p>
 for readability. In those cases, feel free to format the
 arguments according to that structure:</p>
 <pre>// Transform the widget by a 3x3 matrix.
-my_widget.Transform(x1, x2, x3,
-                    y1, y2, y3,
-                    z1, z2, z3);
+myWidget.Transform(x1, x2, x3,
+                   y1, y2, y3,
+                   z1, z2, z3);
 </pre>
 
 </div> 
@@ -5333,7 +5334,7 @@ std::pair&lt;int, int&gt; p{foo, bar};
 // When you have to wrap.
 SomeFunction(
     {"assume a zero-length name before {"},
-    some_other_function_parameter);
+    someOtherFunctionParameter);
 SomeType variable{
     some, other, values,
     {"assume a zero-length name before {"},
@@ -5613,9 +5614,9 @@ consistent in how you break up the lines.</p>
 <p>In this example, the logical AND operator is always at
 the end of the lines:</p>
 
-<pre>if (this_one_thing &gt; this_other_thing &amp;&amp;
-    a_third_thing == a_fourth_thing &amp;&amp;
-    yet_another &amp;&amp; last_one) {
+<pre>if (thisOneThing &gt; thisOtherThing &amp;&amp;
+    aThirdThing == aFourthThing &amp;&amp;
+    yetAnother &amp;&amp; lastOne) {
   ...
 }
 </pre>
@@ -5649,8 +5650,8 @@ where you would use them in <code>x = expr;</code>.</p>
 
 <pre>return result;                  // No parentheses in the simple case.
 // Parentheses OK to make a complex expression more readable.
-return (some_long_condition &amp;&amp;
-        another_condition);
+return (someLongCondition &amp;&amp;
+        anotherCondition);
 </pre>
 
 <pre class="badcode">return (value);                // You wouldn't write var = (value);
@@ -5719,7 +5720,7 @@ of indented code, the directives should start at the
 beginning of the line.</p>
 
 <pre>// Good - directives at beginning of line
-  if (lopsided_score) {
+  if (lopsidedScore) {
 #if DISASTER_PENDING      // Correct -- Starts at beginning of line
     DropEverything();
 # if NOTIFY               // OK but not required -- Spaces after #
@@ -5731,7 +5732,7 @@ beginning of the line.</p>
 </pre>
 
 <pre class="badcode">// Bad - indented directives
-  if (lopsided_score) {
+  if (lopsidedScore) {
     #if DISASTER_PENDING  // Wrong!  The "#if" should be at beginning of line
     DropEverything();
     #endif                // Wrong!  Do not indent "#endif"
@@ -5765,14 +5766,14 @@ needed) is:</p>
   void SomeFunctionThatDoesNothing() {
   }
 
-  void set_some_var(int var) { some_var_ = var; }
-  int some_var() const { return some_var_; }
+  void setSomeVar(int var) { _someVar = var; }
+  int getSomeVar() const { return _someVar; }
 
  private:
   bool SomeInternalFunction();
 
-  int some_var_;
-  int some_other_var_;
+  int _someVar;
+  int _someOtherVar;
 };
 </pre>
 
@@ -5780,7 +5781,7 @@ needed) is:</p>
 
 <ul>
   <li>Any base class name should be on the same line as
-  the subclass name, subject to the 80-column limit.</li>
+  the subclass name, subject to the 130-column limit.</li>
 
   <li>The <code>public:</code>, <code>protected:</code>,
   and <code>private:</code> keywords should be indented
@@ -5816,29 +5817,29 @@ with subsequent lines indented four spaces.</p>
 <p>The acceptable formats for initializer lists are:</p>
 
 <pre>// When everything fits on one line:
-MyClass::MyClass(int var) : some_var_(var) {
+MyClass::MyClass(int var) : _someVar(var) {
   DoSomething();
 }
 
 // If the signature and initializer list are not all on one line,
 // you must wrap before the colon and indent 4 spaces:
 MyClass::MyClass(int var)
-    : some_var_(var), some_other_var_(var + 1) {
+    : _someVar(var), _someOtherVar(var + 1) {
   DoSomething();
 }
 
 // When the list spans multiple lines, put each member on its own line
 // and align them:
 MyClass::MyClass(int var)
-    : some_var_(var),             // 4 space indent
-      some_other_var_(var + 1) {  // lined up
+    : _someVar(var),            // 4 space indent
+      _someOtherVar(var + 1) {  // lined up
   DoSomething();
 }
 
 // As with any other code block, the close curly can be on the same
 // line as the open curly, if it fits.
 MyClass::MyClass(int var)
-    : some_var_(var) {}
+    : _someVar(var) {}
 </pre>
 
 </div> 
@@ -5908,8 +5909,8 @@ class Foo : public Bar {
  public:
   // For inline function implementations, put spaces between the braces
   // and the implementation itself.
-  Foo(int b) : Bar(), baz_(b) {}  // No spaces inside empty braces.
-  void Reset() { baz_ = 0; }  // Spaces separating braces from implementation.
+  Foo(int b) : Bar(), _baz(b) {}  // No spaces inside empty braces.
+  void Reset() { _baz = 0; }  // Spaces separating braces from implementation.
   ...
 </pre>
 
@@ -6068,7 +6069,7 @@ style:</p>
 <ul>
   <li>Do not use Hungarian notation (for example, naming
   an integer <code>iNum</code>). Use the Google naming
-  conventions, including the <code>.cc</code> extension
+  conventions, including the <code>.cpp</code> extension
   for source files.</li>
 
   <li>Windows defines many of its own synonyms for
@@ -6127,7 +6128,7 @@ occasionally need to break on Windows:</p>
   file, typically with a name like <code>StdAfx.h</code>
   or <code>precompile.h</code>. To make your code easier
   to share with other projects, avoid including this file
-  explicitly (except in <code>precompile.cc</code>), and
+  explicitly (except in <code>precompile.cpp</code>), and
   use the <code>/FI</code> compiler option to include the
   file automatically.</li>
 
