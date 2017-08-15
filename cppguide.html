@@ -12,7 +12,7 @@
 <h1>Hopster C++ Style Guide</h1>
 
 <blockquote>
-  <p>Version: v0.1 - Last updated: August 14, 2017</p>
+  <p>Version: v0.2 - Last updated: August 24, 2017</p>
   <p><em>Forked from <a href="https://google.github.io/styleguide/cppguide.html">Google's C++ coding style</a> rev.
     <a href="https://github.com/google/styleguide/commit/77f7f28d314862754877bf19a8b032158522f7aa">77f7f2</a>.</em></p>
 </blockquote>
@@ -719,6 +719,17 @@ Do not use internal linkage in <code>.h</code> files.</p>
 }  // namespace
 </pre>
 </div>
+
+  <p>Adding a terminating comment make reading code easier and doesn't leave place for ambiguity.
+    Although some developers claims that in case of very short unnamed namespaces it is better to
+    not add a terminating comment.</p>
+
+  <pre>namespace {
+constexpr auto kSshCustomPort = 31578;
+}</pre>
+  <p>In the latter example the namespace's boundary is visible and leaving the closing bracket without
+    comment is acceptable, although terminating the namespace is still a recommended approach.</p>
+</div>
 </div>
 
 <h3 id="Nonmember,_Static_Member,_and_Global_Functions">Nonmember, Static Member, and Global Functions</h3>
@@ -757,18 +768,22 @@ functions which do not share static data, use
 <code>myproject/fooBar.h</code>, for example, write</p>
 <pre>namespace myproject {
 namespace foo_bar {
-void Function1();
-void Function2();
+
+void function1();
+void function2();
+
 }  // namespace foo_bar
 }  // namespace myproject
 </pre>
 <p>instead of</p>
 <pre class="badcode">namespace myproject {
+
 class FooBar {
  public:
-  static void Function1();
-  static void Function2();
+  static void function1();
+  static void function2();
 };
+
 }  // namespace myproject
 </pre>
 
@@ -1387,11 +1402,6 @@ superclasses, with the possible exception of the first one,
 are <a href="#Interfaces">pure interfaces</a>. In order to
 ensure that they remain pure interfaces, they must end with
 the <code>Interface</code> suffix.</p>
-</div>
-
-<div class="note">
-<p>There is an <a href="#Windows_Code">exception</a> to
-this rule on Windows.</p>
 </div>
 
 </div> 
@@ -2334,10 +2344,6 @@ over again from scratch.</p>
 features added in C++11, such as <code>noexcept</code>,
 <code>std::exception_ptr</code>, and
 <code>std::nested_exception</code>.</p>
-
-<p>There is an <a href="#Windows_Code">exception</a> to
-this rule (no pun intended) for Windows code.</p>
-</div>
 
 </div> 
 
@@ -3996,9 +4002,9 @@ using other_namespace::Foo;
 
   <p>Like other declarations, aliases declared in a header file are part of that
   header's public API unless they're in a function definition, in the private portion of a class,
-  or in an explicitly-marked internal namespace. Aliases in such areas or in .cpp files are
-  implementation details (because client code can't refer to them), and are not restricted by this
-  rule.</p>
+  or in an explicitly-marked internal namespace. Aliases in such areas or in <code>.cpp</code> files
+  are implementation details (because client code can't refer to them), and are not restricted by
+  this rule.</p>
 </div>
 
 <div class="pros">
@@ -4061,7 +4067,7 @@ typedef unordered_set&lt;DataPoint, hash&lt;DataPoint&gt;, DataPointComparator&g
 </pre>
 
 <p>However, local convenience aliases are fine in function definitions, private sections of
-  classes, explicitly marked internal namespaces, and in .cpp files:</p>
+  classes, explicitly marked internal namespaces, and in <code>.cpp</code> files:</p>
 
 <pre>// In a .cpp file
 using std::unordered_set;
@@ -4283,7 +4289,15 @@ versus a class.</p>
   by mixed case.  For example:</p>
 </div>
 
-<pre>const int kDaysInAWeek = 7;
+<pre>constexpr int kDaysInAWeek = 7;
+constexpr char kDefaultMessage[] = "Hello %s";
+const std::string kDefaultMessageStr = "Hello %s";
+
+// alternatively:
+
+constexpr auto kDaysInAWeek = int{7};
+constexpr auto kDefaultMessage = "Hello %s";
+const auto kDefaultMessageStr = std::string{"Hello %s"};
 </pre>
 
 <div class="stylebody">
@@ -4299,23 +4313,25 @@ versus a class.</p>
 <h3 id="Function_Names">Function Names</h3>
 
 <div class="summary">
-<p>Regular functions have mixed case; accessors and mutators may be named
-like variables.</p>
+<p>Both regular and static functions should start with lowercase and have
+  a capital letter for each new word. No underscores.
+</p>
 </div>
 
-<div class="stylebody">
+  <div class="stylebody">
+    <pre>getInstance()
+addTableEntry()
+deleteUrl()
+openFileOrDie()</pre>
 
-<pre>AddTableEntry()
-DeleteUrl()
-OpenFileOrDie()
-</pre>
+    <p>The same naming rule applies to class- and namespace-scope constants that are exposed as part
+      of an API and that are intended to look like functions, because the fact that they're objects
+      rather than functions is an unimportant implementation detail.</p>
+    <pre>namespace {
+auto addTwoNumbers = [](int a, int b) { return a + b; };
+}</pre>
+  </div>
 
-<p>(The same naming rule applies to class- and namespace-scope
-constants that are exposed as part of an API and that are intended to look
-like functions, because the fact that they're
-objects rather than functions is an unimportant implementation detail.)</p>
-
-</div> 
 
 <h3 id="Namespace_Names">Namespace Names</h3>
 
@@ -4474,28 +4490,48 @@ one may be you!</p>
 <h3 id="Comment_Style">Comment Style</h3>
 
 <div class="summary">
-<p>Use either the <code>//</code> or <code>/* */</code>
+<p>Use either the <code>//</code>, <code>///</code> or <code>/* */</code>
 syntax, as long as you are consistent.</p>
 </div>
 
 <div class="stylebody">
+  <p>You can use either syntax; however, <em>much</em> more common is to use
+  <ul>
+  <li><code>///</code> for functions and classes</li>
+  <li><code>//</code> for variables, files headers, implementation details or explanation,</li>
+  <li><code>/* */</code> for commenting block of code if needed (assuming there is a <em>strong</em>
+    reason to do that), although even here it is better to use <code>//</code> witch is more
+    expressive and explicit - makes comment more visible, especially at code review process.</li>
+</ul>
 
-<p>You can use either the <code>//</code> or the <code>/*
-*/</code> syntax; however, <code>//</code> is
-<em>much</em> more common. Be consistent with how you
-comment and what style you use where.</p>
+  <p>Be consistent with how you
+    comment and what style you use where.</p>
 
 </div> 
 
 <h3 id="File_Comments">File Comments</h3>
 
 <div class="summary">
-<p>Start each file with license boilerplate.</p>
+<p>Start each file with license boilerplate (if applicable).</p>
 
 <p>File comments describe the contents of a file. If a file declares,
 implements, or tests exactly one abstraction that is documented by a comment
 at the point of declaration, file comments are not required. All other files
 must have file comments.</p>
+
+<p>Example of file comments:</p>
+
+<pre>//
+//  ContentLock.cpp
+//  HopsterCommon
+//
+//  Created by Greg Rynkowski on 03/11/2016.
+//  Copyright (c) 2016 Plato Media Ltd. All rights reserved.
+//
+
+#include "ContentLock.h"
+
+// file body...</pre>
 
 </div>
 
@@ -4536,13 +4572,13 @@ comment that describes what it is for and how it should be used.</p>
 
 <div class="stylebody">
 
-<pre>// Iterates over the contents of a GargantuanTable.
-// Example:
-//    GargantuanTableIterator* iter = table-&gt;NewIterator();
-//    for (iter-&gt;Seek("foo"); !iter-&gt;done(); iter-&gt;Next()) {
-//      process(iter-&gt;key(), iter-&gt;value());
-//    }
-//    delete iter;
+<pre>/// Iterates over the contents of a GargantuanTable.
+/// Example:
+///    GargantuanTableIterator* iter = table-&gt;NewIterator();
+///    for (iter-&gt;Seek("foo"); !iter-&gt;done(); iter-&gt;Next()) {
+///      process(iter-&gt;key(), iter-&gt;value());
+///    }
+///    delete iter;
 class GargantuanTableIterator {
   ...
 };
@@ -4613,21 +4649,21 @@ declaration:</p>
 
 <p>Here is an example:</p>
 
-<pre>// Returns an iterator for this table.  It is the client's
-// responsibility to delete the iterator when it is done with it,
-// and it must not use the iterator once the GargantuanTable object
-// on which the iterator was created has been deleted.
-//
-// The iterator is initially positioned at the beginning of the table.
-//
-// This method is equivalent to:
-//    Iterator* iter = table-&gt;NewIterator();
-//    iter-&gt;Seek("");
-//    return iter;
-// If you are going to immediately seek to another place in the
-// returned iterator, it will be faster to use NewIterator()
-// and avoid the extra seek.
-Iterator* GetIterator() const;
+<pre>/// Returns an iterator for this table.  It is the client's
+/// responsibility to delete the iterator when it is done with it,
+/// and it must not use the iterator once the GargantuanTable object
+/// on which the iterator was created has been deleted.
+///
+/// The iterator is initially positioned at the beginning of the table.
+///
+/// This method is equivalent to:
+///    Iterator* iter = table-&gt;NewIterator();
+///    iter-&gt;Seek("");
+///    return iter;
+/// If you are going to immediately seek to another place in the
+/// returned iterator, it will be faster to use NewIterator()
+/// and avoid the extra seek.
+Iterator* getIterator() const;
 </pre>
 
 <p>However, do not be unnecessarily verbose or state the
@@ -4635,8 +4671,8 @@ completely obvious. Notice below that it is not necessary
  to say "returns false otherwise" because this is
 implied.</p>
 
-<pre>// Returns true if the table cannot hold any more entries.
-bool IsTableFull();
+<pre>/// Returns true if the table cannot hold any more entries.
+bool isTableFull();
 </pre>
 
 <p>When documenting function overrides, focus on the
@@ -4820,6 +4856,37 @@ options.setUseCache(ProductOptions::kDontUseCache);
 const DecimalNumber product =
     CalculateProduct(values, options, /*completionCallback=*/nullptr);
 </pre>
+
+
+
+  <h4 id="Function_Default_Values_Comments" class="stylepoint_subsection">Function Default Values Comments</h4>
+
+  <p>Some functions arguments have set default values. Default values are set in header files.
+  One of team member proposed to put in a <code>.cpp</code> files a comment that would inform about
+    default values.</p>
+
+  <p>Example:</p>
+
+  <pre>void Car::drive(const velocity /*= 20*/) {
+  // implementation details...
+}</pre>
+
+  <div class="pros">
+    <p>The default value is easier accessible for a developer who is writing or reading
+      <code>.cpp</code> file.</p>
+  </div>
+
+  <div class="cons">
+    <p>Breaking DRY rule. We need to maintain the comment every time if we decide to change the
+    function's interface by changing a default value. In fact, introducing that rule cost us more
+    because we never know whether someone added such comment to <code>.cpp</code> file or not, so we
+    always need to check this. If we don't do that, the comment would be lying and causing confusion
+    and misunderstanding.</p>
+  </div>
+
+  <div class="decision">
+    <p>We decided to allow to use this approach, although we would do a revision of it after a while.</p>
+  </div>
 
 <h4 class="stylepoint_subsection">Don'ts</h4>
 
@@ -5883,9 +5950,64 @@ on its own line.</p>
 namespace bar {
 </pre>
 
-</div> 
 
-<h3 id="Horizontal_Whitespace">Horizontal Whitespace</h3>
+  <h3 id="Alternative_namespace_tokens">Alternative namespace tokens</h3>
+
+  <div class="summary">
+    <p>Wherever it might be useful, use HS_NAMESPACE* macros instead of
+      standard namespaces' tokens.</p>
+  </div>
+
+  <div class="stylebody">
+    <p>Some IDEs doesn't allow to change formatting rules and they put unwanted indentation for
+      everything in a namespace scope. In result, a developer ends up fighting with a IDE's smart
+      indentation feature. To solve that issue we provided a macro-definitions that are resolved
+      to standard namespace tokens.
+    </p>
+
+    <p>There are available three macros:</p>
+    <ul>
+    <li>
+      <code>HS_NAMESPACE_HOPSTER_BEGIN</code>, <code>HS_NAMESPACE_HOPSTER_END</code>
+      - added for the most popular namespace in our project
+      <pre>HS_NAMESPACE_HOPSTER_BEGIN
+
+void foo() {
+  ...
+}
+
+HS_NAMESPACE_HOPSTER_END</pre>
+    </li>
+    <li>
+      <code>HS_NAMESPACE_BEGIN</code>, <code>HS_NAMESPACE_END</code>
+      - macro-definitions that allow to set any namespace
+      <pre>HS_NAMESPACE_HOPSTER_BEGIN
+HS_NAMESPACE_BEGIN(ee_robin)
+
+// ... code in hopster::ee_robin namespace
+
+HS_NAMESPACE_END(ee_robin)
+HS_NAMESPACE_HOPSTER_END</pre>
+    </li>
+    <li>
+      <code>HS_NAMESPACE_ANONYMOUS_BEGIN</code>,
+      <code>HS_NAMESPACE_ANONYMOUS_END</code> - added for anonymous namespaces
+      <pre>HS_NAMESPACE_ANONYMOUS_BEGIN
+
+constexpr auto kSshCustomPort = 31578;
+
+HS_NAMESPACE_ANONYMOUS_END</pre>
+    </li>
+    </ul>
+    <p>Standard tokens for namespaces are still allowed, but because of difficulties that they cause
+      for some team members, alternative tokens are adviced to use.</p>
+  </div>
+
+
+
+
+
+  <h3 id="Horizontal_Whitespace">Horizontal Whitespace</h3>
 
 <div class="summary">
 <p>Use of horizontal whitespace depends on location. Never put
@@ -6050,94 +6172,6 @@ local consistency, too.</p>
 
  
 
-<h3 id="Windows_Code">Windows Code</h3>
-
-<div class="summary">
-<p> Windows
-programmers have developed their own set of coding
-conventions, mainly derived from the conventions in Windows
-headers and other Microsoft code. We want to make it easy
-for anyone to understand your code, so we have a single set
-of guidelines for everyone writing C++ on any platform.</p>
-</div>
-
-<div class="stylebody">
-<p>It is worth reiterating a few of the guidelines that
-you might forget if you are used to the prevalent Windows
-style:</p>
-
-<ul>
-  <li>Do not use Hungarian notation (for example, naming
-  an integer <code>iNum</code>). Use the Google naming
-  conventions, including the <code>.cpp</code> extension
-  for source files.</li>
-
-  <li>Windows defines many of its own synonyms for
-  primitive types, such as <code>DWORD</code>,
-  <code>HANDLE</code>, etc. It is perfectly acceptable,
-  and encouraged, that you use these types when calling
-  Windows API functions. Even so, keep as close as you
-  can to the underlying C++ types. For example, use
-  <code>const TCHAR *</code> instead of
-  <code>LPCTSTR</code>.</li>
-
-  <li>When compiling with Microsoft Visual C++, set the
-  compiler to warning level 3 or higher, and treat all
-  warnings as errors.</li>
-
-  <li>Do not use <code>#pragma once</code>; instead use
-  the standard Google include guards. The path in the
-  include guards should be relative to the top of your
-  project tree.</li>
-
-  <li>In fact, do not use any nonstandard extensions,
-  like <code>#pragma</code> and <code>__declspec</code>,
-  unless you absolutely must. Using
-  <code>__declspec(dllimport)</code> and
-  <code>__declspec(dllexport)</code> is allowed; however,
-  you must use them through macros such as
-  <code>DLLIMPORT</code> and <code>DLLEXPORT</code>, so
-  that someone can easily disable the extensions if they
-  share the code.</li>
-</ul>
-
-<p>However, there are just a few rules that we
-occasionally need to break on Windows:</p>
-
-<ul>
-  <li>Normally we <a href="#Multiple_Inheritance">forbid
-  the use of multiple implementation inheritance</a>;
-  however, it is required when using COM and some ATL/WTL
-  classes. You may use multiple implementation
-  inheritance to implement COM or ATL/WTL classes and
-  interfaces.</li>
-
-  <li>Although you should not use exceptions in your own
-  code, they are used extensively in the ATL and some
-  STLs, including the one that comes with Visual C++.
-  When using the ATL, you should define
-  <code>_ATL_NO_EXCEPTIONS</code> to disable exceptions.
-  You should investigate whether you can also disable
-  exceptions in your STL, but if not, it is OK to turn on
-  exceptions in the compiler. (Note that this is only to
-  get the STL to compile. You should still not write
-  exception handling code yourself.)</li>
-
-  <li>The usual way of working with precompiled headers
-  is to include a header file at the top of each source
-  file, typically with a name like <code>StdAfx.h</code>
-  or <code>precompile.h</code>. To make your code easier
-  to share with other projects, avoid including this file
-  explicitly (except in <code>precompile.cpp</code>), and
-  use the <code>/FI</code> compiler option to include the
-  file automatically.</li>
-
-  <li>Resource headers, which are usually named
-  <code>resource.h</code> and contain only macros, do not
-  need to conform to these style guidelines.</li>
-</ul>
-
-</div> 
 
 <h2 class="ignoreLink">Parting Words</h2>
 
