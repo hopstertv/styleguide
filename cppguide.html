@@ -12,7 +12,7 @@
 <h1>Hopster C++ Style Guide</h1>
 
 <blockquote>
-  <p>Version: v0.2.1 - Last updated: August 29, 2017</p>
+  <p>Version: v0.2.2 - Last updated: August 29, 2017</p>
   <p><em>Forked from <a href="https://google.github.io/styleguide/cppguide.html">Google's C++ coding style</a> rev.
     <a href="https://github.com/google/styleguide/commit/77f7f28d314862754877bf19a8b032158522f7aa">77f7f2</a>.</em></p>
 </blockquote>
@@ -475,7 +475,7 @@ don't count on the fact that you included <code>foo.h</code> which
 yourself, unless <code>foo.h</code> explicitly demonstrates its intent
 to provide you the symbols of <code>bar.h</code>.  However, any
 includes present in the related header do not need to be included
-again in the related <code>cc</code> (i.e., <code>foo.cpp</code> can
+again in the related <code>cpp</code> (i.e., <code>foo.cpp</code> can
 rely on <code>foo.h</code>'s includes).</p>
 
 <p>For example, the includes in
