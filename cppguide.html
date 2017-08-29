@@ -12,7 +12,7 @@
 <h1>Hopster C++ Style Guide</h1>
 
 <blockquote>
-  <p>Version: v0.2 - Last updated: August 24, 2017</p>
+  <p>Version: v0.2.1 - Last updated: August 29, 2017</p>
   <p><em>Forked from <a href="https://google.github.io/styleguide/cppguide.html">Google's C++ coding style</a> rev.
     <a href="https://github.com/google/styleguide/commit/77f7f28d314862754877bf19a8b032158522f7aa">77f7f2</a>.</em></p>
 </blockquote>
@@ -730,9 +730,65 @@ constexpr auto kSshCustomPort = 31578;
   <p>In the latter example the namespace's boundary is visible and leaving the closing bracket without
     comment is acceptable, although terminating the namespace is still a recommended approach.</p>
 </div>
+
+
+  <h3 id="Alternative_namespace_tokens">Alternative namespace tokens</h3>
+
+  <div class="summary">
+    <p>Wherever it might be useful, use HS_NAMESPACE* macros instead of
+      standard namespaces' tokens.</p>
+  </div>
+
+  <div class="stylebody">
+    <p>Some IDEs doesn't allow to change formatting rules and they put unwanted indentation for
+      everything in a namespace scope. In result, a developer ends up fighting with a IDE's smart
+      indentation feature. To solve that issue we provided a macro-definitions that are resolved
+      to standard namespace tokens.
+    </p>
+
+    <p>There are available three macros:</p>
+    <ul>
+      <li>
+        <code>HS_NAMESPACE_HOPSTER_BEGIN</code>, <code>HS_NAMESPACE_HOPSTER_END</code>
+        - added for the most popular namespace in our project
+        <pre>HS_NAMESPACE_HOPSTER_BEGIN
+
+void foo() {
+  ...
+}
+
+HS_NAMESPACE_HOPSTER_END</pre>
+      </li>
+      <li>
+        <code>HS_NAMESPACE_BEGIN</code>, <code>HS_NAMESPACE_END</code>
+        - macro-definitions that allow to set any namespace
+        <pre>HS_NAMESPACE_HOPSTER_BEGIN
+HS_NAMESPACE_BEGIN(ee_robin)
+
+// ... code in hopster::ee_robin namespace
+
+HS_NAMESPACE_END(ee_robin)
+HS_NAMESPACE_HOPSTER_END</pre>
+      </li>
+      <li>
+        <code>HS_NAMESPACE_ANONYMOUS_BEGIN</code>,
+        <code>HS_NAMESPACE_ANONYMOUS_END</code> - added for anonymous namespaces
+        <pre>HS_NAMESPACE_ANONYMOUS_BEGIN
+
+constexpr auto kSshCustomPort = 31578;
+
+HS_NAMESPACE_ANONYMOUS_END</pre>
+      </li>
+    </ul>
+    <p>Standard tokens for namespaces are still allowed, but because of difficulties that they cause
+      for some team members, alternative tokens are adviced to use.</p>
+  </div>
+
 </div>
 
-<h3 id="Nonmember,_Static_Member,_and_Global_Functions">Nonmember, Static Member, and Global Functions</h3>
+
+
+  <h3 id="Nonmember,_Static_Member,_and_Global_Functions">Nonmember, Static Member, and Global Functions</h3>
 
 <div class="summary">
 <p>Prefer placing nonmember functions in a namespace; use completely global
@@ -4227,7 +4283,7 @@ enum UrlTableErrors { ...
 <div class="summary">
 <p>The names of variables (including function parameters) and data members are
 all lowercase, with underscores between words. Data members of classes (but not
-structs) additionally have trailing underscores. For instance:
+structs and not static members) additionally have trailing underscores. For instance:
 <code>aLocalVariable</code>, <code>aStructDataMember</code>,
 <code>_aClassDataMember</code>.</p>
 </div>
@@ -5949,62 +6005,6 @@ on its own line.</p>
 <pre>namespace foo {
 namespace bar {
 </pre>
-
-
-  <h3 id="Alternative_namespace_tokens">Alternative namespace tokens</h3>
-
-  <div class="summary">
-    <p>Wherever it might be useful, use HS_NAMESPACE* macros instead of
-      standard namespaces' tokens.</p>
-  </div>
-
-  <div class="stylebody">
-    <p>Some IDEs doesn't allow to change formatting rules and they put unwanted indentation for
-      everything in a namespace scope. In result, a developer ends up fighting with a IDE's smart
-      indentation feature. To solve that issue we provided a macro-definitions that are resolved
-      to standard namespace tokens.
-    </p>
-
-    <p>There are available three macros:</p>
-    <ul>
-    <li>
-      <code>HS_NAMESPACE_HOPSTER_BEGIN</code>, <code>HS_NAMESPACE_HOPSTER_END</code>
-      - added for the most popular namespace in our project
-      <pre>HS_NAMESPACE_HOPSTER_BEGIN
-
-void foo() {
-  ...
-}
-
-HS_NAMESPACE_HOPSTER_END</pre>
-    </li>
-    <li>
-      <code>HS_NAMESPACE_BEGIN</code>, <code>HS_NAMESPACE_END</code>
-      - macro-definitions that allow to set any namespace
-      <pre>HS_NAMESPACE_HOPSTER_BEGIN
-HS_NAMESPACE_BEGIN(ee_robin)
-
-// ... code in hopster::ee_robin namespace
-
-HS_NAMESPACE_END(ee_robin)
-HS_NAMESPACE_HOPSTER_END</pre>
-    </li>
-    <li>
-      <code>HS_NAMESPACE_ANONYMOUS_BEGIN</code>,
-      <code>HS_NAMESPACE_ANONYMOUS_END</code> - added for anonymous namespaces
-      <pre>HS_NAMESPACE_ANONYMOUS_BEGIN
-
-constexpr auto kSshCustomPort = 31578;
-
-HS_NAMESPACE_ANONYMOUS_END</pre>
-    </li>
-    </ul>
-    <p>Standard tokens for namespaces are still allowed, but because of difficulties that they cause
-      for some team members, alternative tokens are adviced to use.</p>
-  </div>
-
-
-
 
 
   <h3 id="Horizontal_Whitespace">Horizontal Whitespace</h3>
