@@ -2184,7 +2184,52 @@ you can download
 
 </div> 
 
- 
+
+  <h2 id="Hopster-Specific_Rules">Hopster-Specific Rules</h2>
+
+  <h3 id="jni-wrapper-name">JNI wrapper name</h3>
+
+  <div class="summary">
+    <p>For JNI wrapper classes that map functionality of Java class use Java
+      class' name prefixed with <code>Java</code> word, eg.
+      <code>JavaAmazonLoginSdkWrapper</code>.</p>
+  </div>
+
+  <div class="stylebody">
+
+    <p>Usually when we work with logic required Android specific operations we need to communicate
+      between Java and C++ code, so we create a C++ class that covers Java class functions.
+      That class is a thin wrapper that uses JNI and <code>JavaObject</code> to communicate with
+      Java code. In those situations the best approach is to use for C++ class the same name as the
+      name for Java class, with one difference - C++ class should be prefixed with the word
+      <code>Java</code>.</p>
+
+    <p>Example:</p>
+    <pre>class JavaAmazonLoginSdkWrapper: public JavaObject<JavaAmazonLoginSdkWrapper> {
+ public:
+  static std::string jtypestr() {
+    return "Ltv/hopster/main/sdk/amazon/login/AmazonLoginSdkWrapper;";
+  }
+
+  void grantToken(const LoginWithAmazonDelegate::Ref& delegate) {
+    const auto delegateJavaPointer = LoginWithAmazonDelegateJavaPointer::Create(delegate);
+    callMethod<void, LoginWithAmazonDelegateJavaPointer>("grantToken", delegateJavaPointer);
+  }
+
+  void grantCode(const LoginWithAmazonDelegate::Ref& delegate) {
+   const auto delegateJavaPointer = LoginWithAmazonDelegateJavaPointer::Create(delegate);
+    callMethod<void, LoginWithAmazonDelegateJavaPointer>("grantCode", delegateJavaPointer);
+  }
+};</pre>
+
+    <p>In the above snippet we are able to spot reference to <code>AmazonLoginSdkWrapper</code> Java
+      class and definition of C++ wrapper named <code>JavaAmazonLoginSdkWrapper</code>.</p>
+    <p>The only responsibility of this class is to provide same methods set as its Java archetype.
+    </p>
+
+  </div>
+
+
 
 <h2 id="Other_C++_Features">Other C++ Features</h2>
 
