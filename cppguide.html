@@ -230,7 +230,7 @@ possible.</p>
 <p>All header files should have <code>#define</code> guards to
 prevent multiple inclusion. The format of the symbol name
 should be
-<code><i>&lt;PROJECT&gt;</i>_<i>&lt;PATH&gt;</i>_<i>&lt;FILE&gt;</i>_H_</code>.</p>
+<code><i>&lt;PROJECT&gt;</i>_<i>&lt;FILE&gt;</i>_H_</code>.</p>
 </div> 
 
 <div class="stylebody">
@@ -243,12 +243,12 @@ example, the file <code>foo/src/bar/baz.h</code> in
 project <code>foo</code> should have the following
 guard:</p>
 
-<pre>#ifndef FOO_BAR_BAZ_H_
-#define FOO_BAR_BAZ_H_
+<pre>#ifndef FOO_BAZ_H_
+#define FOO_BAZ_H_
 
 ...
 
-#endif  // FOO_BAR_BAZ_H_
+#endif  // FOO_BAZ_H_
 </pre>
 
 
